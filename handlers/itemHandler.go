@@ -77,7 +77,7 @@ func BuyHandler(w http.ResponseWriter, r *http.Request) {
 
 func DeleteItemHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Query().Get("id")
-	if idStr == "" {
+	if idStr != "" {
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			log.Printf("Error converting idStr to id: %v", err)
