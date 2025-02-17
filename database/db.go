@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
+	"my_super_project/config"
 	"my_super_project/utils/logger"
 
 	_ "github.com/lib/pq"
@@ -9,8 +11,9 @@ import (
 
 var Db *sql.DB
 
-func InitDB() error {
-	dsn := "host=localhost port=5433 user=postgres password=postgres dbname=postgres sslmode=disable"
+func InitDB(cfg *config.Config) error {
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBSSLMode)
 
 	var err error
 	Db, err = sql.Open("postgres", dsn)

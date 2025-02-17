@@ -19,7 +19,10 @@ func GetItemsHandler(w http.ResponseWriter, r *http.Request) {
 
 		item, err := services.GetItemById(id)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusNotFound)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusNotFound)
+
+			json.NewEncoder(w).Encode(map[string]string{"error": fmt.Sprintf("can not find item by ID: %d", id)})
 			return
 		}
 
