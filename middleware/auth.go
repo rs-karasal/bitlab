@@ -72,7 +72,7 @@ func JWTAuthMiddleware(next http.Handler, cfg *config.Config) http.Handler {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpecred signing method: %v", token.Header["alg"])
 			}
-			return cfg.SecretKey, nil
+			return []byte(cfg.SecretKey), nil
 		})
 
 		if err != nil || !token.Valid {

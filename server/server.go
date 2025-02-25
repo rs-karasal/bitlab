@@ -14,7 +14,8 @@ func Run(cfg *config.Config) {
 
 	mux.HandleFunc("/items", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			middleware.BasicAuthMiddleware(handlers.GetItemsHandler).ServeHTTP(w, r)
+			middleware.JWTAuthMiddleware(http.HandlerFunc(handlers.GetItemsHandler), cfg).ServeHTTP(w, r)
+			// middleware.BasicAuthMiddleware(handlers.GetItemsHandler).ServeHTTP(w, r)
 			// } else if r.Method == http.MethodPost {
 			// 	handlers.AddItemHandler(w, r)
 			// } else if r.Method == http.MethodDelete {
