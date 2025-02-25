@@ -13,6 +13,7 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBSSLMode  string
+	SecretKey  string
 }
 
 func LoadConfig() (*Config, error) {
@@ -28,6 +29,7 @@ func LoadConfig() (*Config, error) {
 		DBPassword: getEnv("DB_PASSWORD", "ps"),
 		DBName:     getEnv("DB_NAME", "ps"),
 		DBSSLMode:  getEnv("DB_SSL_MODE", "enable"),
+		SecretKey:  getEnv("SECRET_KEY", "default_secret_key"),
 	}, nil
 }
 
