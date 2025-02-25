@@ -2,10 +2,14 @@ package middleware
 
 import (
 	"encoding/base64"
+	"fmt"
+	"my_super_project/config"
 	"my_super_project/database"
 	"my_super_project/models"
 	"net/http"
 	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func BasicAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
@@ -51,4 +55,31 @@ func BasicAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 		next(w, r)
 	}
+}
+
+func JWTAuthMiddleware(next http.Handler, cfg *config.Config) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+
+		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpecred signing method: %v", token.Header["alg"])
+			}
+			return cfg.SecretKey, nil
+		})
+
+		if err != nil || !token.Valid {
+			http.Error(w, "Unauthorized: invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }

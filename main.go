@@ -28,5 +28,5 @@ func main() {
 	}()
 
 	// Запускаем наш сервер
-	server.Run()
+	server.Run(cfg)
 }

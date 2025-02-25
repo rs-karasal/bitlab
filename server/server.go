@@ -1,6 +1,7 @@
 package server
 
 import (
+	"my_super_project/config"
 	"my_super_project/handlers"
 	"my_super_project/middleware"
 	"my_super_project/utils/logger"
@@ -8,7 +9,7 @@ import (
 )
 
 // start server
-func Run() {
+func Run(cfg *config.Config) {
 	mux := http.NewServeMux() // мультиплексор (маршрутизатор)
 
 	mux.HandleFunc("/items", func(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,7 @@ func Run() {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+	mux.HandleFunc("/users/auth", handlers.AuthHandler(cfg))
 
 	logger.InfoLog.Println("Server is running on http://localhost:8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
