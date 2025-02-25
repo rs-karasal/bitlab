@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"encoding/base64"
-	"fmt"
 	"my_super_project/database"
 	"my_super_project/models"
 	"net/http"
@@ -36,13 +35,12 @@ func BasicAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		username, password := credentials[0], credentials[1]
-		fmt.Printf("Username: %v, Password: %v", username, password)
 
 		var user models.User
 		err = database.Db.QueryRow("SELECT id, username, hashed_password FROM users WHERE username = $1", username).
 			Scan(&user.ID, &user.Username, &user.HashedPassword)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
